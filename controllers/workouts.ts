@@ -12,7 +12,7 @@ export function createWorkout (request: express.Request, response: express.Respo
     emptyFields.push('title')
   }
 
-  if (repetitions == null || repetitions === 0 ||  repetitions.length === 0) {
+  if (repetitions == null || repetitions === 0 || repetitions.length === 0) {
     emptyFields.push('repetitions')
   }
 
@@ -22,7 +22,7 @@ export function createWorkout (request: express.Request, response: express.Respo
 
   if (emptyFields.length > 0) {
     console.log(emptyFields)
-    
+
     response
       .status(400)
       .send({ error: 'Por favor, rellena todos los campos.', emptyFields })

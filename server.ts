@@ -3,6 +3,7 @@ import express from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 import mongoose from 'mongoose'
+import userRouter from './routes/user'
 import workoutsRouter from './routes/workouts'
 
 dotenv.config()
@@ -18,6 +19,7 @@ app.get('/', (request, response) => {
   })
 })
 
+app.use('/api/v1/user/', userRouter)
 app.use('/api/v1/workouts/', workoutsRouter)
 
 const MONGO_URI = process.env.MONGO_URI
