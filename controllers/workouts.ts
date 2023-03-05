@@ -5,6 +5,27 @@ import mongoose from 'mongoose'
 export function createWorkout (request: express.Request, response: express.Response): void {
   const { title, repetitions, load } = request.body
 
+  const emptyFields: string[] = []
+
+  if (title == null || title.length === 0) {
+    emptyFields.push('title')
+  }
+
+  if (repetitions == null || repetitions.length === 0) {
+    emptyFields.push('repetitions')
+  }
+
+  if (load == null || load.length === 0) {
+    emptyFields.push('load')
+  }
+
+  if (emptyFields.length > 0) {
+    response
+      .status(400)
+      .send({ message: 'Por favor, rellena todos los campos.', emptyFields })
+    return
+  }
+
   Workout.create({ title, repetitions, load })
     .then(workout => {
       response
