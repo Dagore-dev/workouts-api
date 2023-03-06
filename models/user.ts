@@ -9,6 +9,7 @@ interface IUser {
 
 interface UserModel extends Model<IUser> {
   signup: (email: string, password: string) => Promise<Document>
+  login: (email: string, password: string) => Promise<Document>
 }
 
 const userSchema = new Schema<IUser, UserModel>({
@@ -24,8 +25,6 @@ const userSchema = new Schema<IUser, UserModel>({
 })
 
 userSchema.statics.signup = async function (email: string, password: string): Promise<Document> {
-  const exists = await this.findOne({ email })
-
   if (!validator.isEmail(email)) {
     throw new Error(`"${email}" no es un email válido.`)
   }
@@ -34,6 +33,7 @@ userSchema.statics.signup = async function (email: string, password: string): Pr
     throw new Error('La contraseña debe tener al menos 8 caracteres y contener mayúsculas, minúsculas, números y caracteres especiales.')
   }
 
+  const exists = await this.findOne({ email })
   if (exists != null) {
     throw new Error(`"${email}" está en uso.`)
   }
@@ -41,6 +41,24 @@ userSchema.statics.signup = async function (email: string, password: string): Pr
   const salt = await bcrypt.genSalt(10)
   const hashedPassword = await bcrypt.hash(password, salt)
   const user = await this.create({ email, password: hashedPassword })
+
+  return user
+}
+
+userSchema.statics.login = async function (email: string, password: string): Promise<Document> {
+  if (!validator.isEmail(email)) {
+    throw new Error(`"${email}" no es un email válido.`)
+  }
+
+  const user = await this.findOne({ email })
+  if (user == null) {
+    throw new Error('El email o la contraseña no son válidos')
+  }
+
+  const match = await bcrypt.compare(password, user.password)
+  if (!match) {
+    throw new Error('El email o la contraseña no son válidos')
+  }
 
   return user
 }
