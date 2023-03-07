@@ -1,18 +1,10 @@
-import { Model, Schema, model, Document } from 'mongoose'
+import { Schema, model, Document } from 'mongoose'
 import bcrypt from 'bcrypt'
 import validator from 'validator'
+import IUser from '../interfaces/IUser'
+import IUserModel from '../interfaces/IUserModel'
 
-interface IUser {
-  email: string
-  password: string
-}
-
-interface UserModel extends Model<IUser> {
-  signup: (email: string, password: string) => Promise<Document>
-  login: (email: string, password: string) => Promise<Document>
-}
-
-const userSchema = new Schema<IUser, UserModel>({
+const userSchema = new Schema<IUser, IUserModel>({
   email: {
     type: String,
     required: true,
@@ -63,4 +55,4 @@ userSchema.statics.login = async function (email: string, password: string): Pro
   return user
 }
 
-export default model<IUser, UserModel>('User', userSchema)
+export default model<IUser, IUserModel>('User', userSchema)

@@ -1,8 +1,9 @@
 import express from 'express'
 import Workout from '../models/workouts'
 import mongoose from 'mongoose'
+import IAuthorizedRequest from '../interfaces/IAuthorizedRequest'
 
-export function createWorkout (request: express.Request, response: express.Response): void {
+export function createWorkout (request: IAuthorizedRequest, response: express.Response): void {
   const { title, repetitions, load } = request.body
 
   console.log(title, repetitions, load)
@@ -45,7 +46,7 @@ export function createWorkout (request: express.Request, response: express.Respo
     })
 }
 
-export function getAllWorkouts (request: express.Request, response: express.Response): void {
+export function getAllWorkouts (request: IAuthorizedRequest, response: express.Response): void {
   Workout.find({}).sort({ createdAt: -1 })
     .then(workouts => response.send({ workouts }))
     .catch(error => {
@@ -58,7 +59,7 @@ export function getAllWorkouts (request: express.Request, response: express.Resp
     })
 }
 
-export function getWorkoutById (request: express.Request, response: express.Response): void {
+export function getWorkoutById (request: IAuthorizedRequest, response: express.Response): void {
   const { id } = request.params
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -93,7 +94,7 @@ export function getWorkoutById (request: express.Request, response: express.Resp
     })
 }
 
-export function deleteWorkoutById (request: express.Request, response: express.Response): void {
+export function deleteWorkoutById (request: IAuthorizedRequest, response: express.Response): void {
   const { id } = request.params
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -128,7 +129,7 @@ export function deleteWorkoutById (request: express.Request, response: express.R
     })
 }
 
-export function updateWorkoutById (request: express.Request, response: express.Response): void {
+export function updateWorkoutById (request: IAuthorizedRequest, response: express.Response): void {
   const { id } = request.params
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
