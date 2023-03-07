@@ -1,4 +1,5 @@
-import { Model } from 'mongoose'
+import { Model, Document } from 'mongoose'
+
 import IUser from './IUser'
 
 export default interface IUserModel extends Model<IUser> {
