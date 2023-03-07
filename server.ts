@@ -26,8 +26,8 @@ const MONGO_URI = process.env.MONGO_URI
 if (MONGO_URI != null) {
   mongoose.connect(MONGO_URI)
     .then(() => {
-      const PORT = process.env.PORT ?? '8080'
-      app.listen(PORT, () => {
+      const PORT = Number(process.env.PORT ?? '8080')
+      app.listen(PORT, '0.0.0.0', () => {
         console.log(`Listening on port ${PORT}`)
       })
     })
