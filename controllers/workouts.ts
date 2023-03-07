@@ -1,11 +1,12 @@
 import express from 'express'
 import Workout from '../models/workouts'
 import mongoose from 'mongoose'
+import IAuthorizedRequest from '../interfaces/IAuthorizedRequest'
 
 export function createWorkout (request: express.Request, response: express.Response): void {
   const { title, repetitions, load } = request.body
+  const userId = (request as IAuthorizedRequest).user?._id
 
-  console.log(title, repetitions, load)
   const emptyFields: string[] = []
 
   if (title == null || title.length === 0) {
@@ -20,6 +21,10 @@ export function createWorkout (request: express.Request, response: express.Respo
     emptyFields.push('load')
   }
 
+  if (userId == null) {
+    emptyFields.push('userId')
+  }
+
   if (emptyFields.length > 0) {
     console.log(emptyFields)
 
@@ -29,7 +34,7 @@ export function createWorkout (request: express.Request, response: express.Respo
     return
   }
 
-  Workout.create({ title, repetitions, load })
+  Workout.create({ title, repetitions, load, userId })
     .then(workout => {
       response
         .status(200)
@@ -46,7 +51,15 @@ export function createWorkout (request: express.Request, response: express.Respo
 }
 
 export function getAllWorkouts (request: express.Request, response: express.Response): void {
-  Workout.find({}).sort({ createdAt: -1 })
+  const userId = (request as IAuthorizedRequest).user?._id
+  if (userId == null) {
+    response
+      .status(400)
+      .send({ error: 'Error inesperado.' })
+    return
+  }
+
+  Workout.find({ userId }).sort({ createdAt: -1 })
     .then(workouts => response.send({ workouts }))
     .catch(error => {
       response.status(400)
